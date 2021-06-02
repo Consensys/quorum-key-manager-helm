@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "quorum-key-manager-helm.fullname" . }}-test-connection"
+  labels:
+    {{- include "quorum-key-manager-helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "quorum-key-manager-helm.fullname" . }}:{{ .Values.service.http.port }}']
+  restartPolicy: Never
