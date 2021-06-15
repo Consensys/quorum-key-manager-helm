@@ -1,11 +1,11 @@
-# Default values for quorum-key-manager-helm.
+# Default values for quorum-key-manager.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: docker.consensys.net/docker-private-dev/quorum-key-manager
+  repository: docker.consensys.net/priv/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -15,10 +15,10 @@ fullnameOverride: ""
 
 imageCredentials:
   create: true
-  name: existing-secret
+  name: existing-secret1
   registry: docker.consensys.net
-  username: someone
-  password: sillyness
+  username: cs-ops
+  password: my_password
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -45,9 +45,9 @@ securityContext: {}
 service:
   type: ClusterIP
   http:
-    port: 8081
+    port: 8080
   metrics:
-    port: 8082
+    port: 8081
 
 ingress:
   enabled: false

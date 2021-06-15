@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "quorum-key-manager-helm.name" -}}
+{{- define "quorum-key-manager.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "quorum-key-manager-helm.fullname" -}}
+{{- define "quorum-key-manager.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,14 +26,14 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "quorum-key-manager-helm.chart" -}}
+{{- define "quorum-key-manager.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common annotations
 */}}
-{{- define "quorum-key-manager-helm.annotations" -}}
+{{- define "quorum-key-manager.annotations" -}}
 meta.helm.sh/release-name: {{ .Release.Name }}
 meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{- end }}
@@ -41,9 +41,9 @@ meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{/*
 Common labels
 */}}
-{{- define "quorum-key-manager-helm.labels" -}}
-helm.sh/chart: {{ include "quorum-key-manager-helm.chart" . }}
-{{ include "quorum-key-manager-helm.selectorLabels" . }}
+{{- define "quorum-key-manager.labels" -}}
+helm.sh/chart: {{ include "quorum-key-manager.chart" . }}
+{{ include "quorum-key-manager.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -53,17 +53,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "quorum-key-manager-helm.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "quorum-key-manager-helm.name" . }}
+{{- define "quorum-key-manager.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "quorum-key-manager.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "quorum-key-manager-helm.serviceAccountName" -}}
+{{- define "quorum-key-manager.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "quorum-key-manager-helm.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "quorum-key-manager.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -72,14 +72,14 @@ Create the name of the service account to use
 {{/*
 Define imageCredentials name.
 */}}
-{{- define "quorum-key-manager-helm.imagePullSecretName" -}}
+{{- define "quorum-key-manager.imagePullSecretName" -}}
 {{- if .Values.imageCredentials.create -}}
-	{{ printf "%s-%s" (include "quorum-key-manager-helm.fullname" .) "registry" | trunc 63 | trimSuffix "-" }}
+	{{ printf "%s-%s" (include "quorum-key-manager.fullname" .) "registry" | trunc 63 | trimSuffix "-" }}
 {{- else -}}
 	{{ .Values.imageCredentials.name }}
 {{- end -}}
 {{- end -}}
 
-{{- define "quorum-key-manager-helm.imagePullSecret" }}
+{{- define "quorum-key-manager.imagePullSecret" }}
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.imageCredentials.registry (printf "%s:%s" .Values.imageCredentials.username .Values.imageCredentials.password | b64enc) | b64enc }}
 {{- end }}

@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "quorum-key-manager-helm.fullname" . }}
+  name: {{ include "quorum-key-manager.fullname" . }}
   labels:
-    {{- include "quorum-key-manager-helm.labels" . | nindent 4 }}
+    {{- include "quorum-key-manager.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "quorum-key-manager-helm.selectorLabels" . | nindent 6 }}
+      {{- include "quorum-key-manager.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -15,13 +15,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "quorum-key-manager-helm.selectorLabels" . | nindent 8 }}
+        {{- include "quorum-key-manager.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.imageCredentials }}
       imagePullSecrets:
-        - name: {{ include "quorum-key-manager-helm.imagePullSecretName" . }}
+        - name: {{ include "quorum-key-manager.imagePullSecretName" . }}
       {{- end }}
-      serviceAccountName: {{ include "quorum-key-manager-helm.serviceAccountName" . }}
+      serviceAccountName: {{ include "quorum-key-manager.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -36,28 +36,28 @@ spec:
             - /manifests
           ports:
             - name: http-svc
-              containerPort: 8081
+              containerPort: 8080
               protocol: TCP
             - name: http-metrics
-              containerPort: 8082
+              containerPort: 8081
               protocol: TCP
           volumeMounts:
             - name: manifests-config
               mountPath: /manifests
           livenessProbe:
             httpGet:
-              path: /
+              path: /live
               port: http-metrics
           readinessProbe:
             httpGet:
-              path: /
+              path: /ready
               port: http-metrics
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: manifests-config
           configMap:
-            name: {{ include "quorum-key-manager-helm.fullname" . }}-manifests
+            name: {{ include "quorum-key-manager.fullname" . }}-manifests
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
