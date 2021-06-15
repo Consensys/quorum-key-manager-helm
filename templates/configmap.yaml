@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "quorum-key-manager-helm.fullname" . }}-manifests
+  name: {{ include "quorum-key-manager.fullname" . }}-manifests
   labels:
-    {{- include "quorum-key-manager-helm.labels" . | nindent 4 }}
+    {{- include "quorum-key-manager.labels" . | nindent 4 }}
   annotations:
-    {{- include "quorum-key-manager-helm.annotations" . | nindent 4 }}
+    {{- include "quorum-key-manager.annotations" . | nindent 4 }}
 data:
   manifests.yaml: 
-    {{- printf "%v" .Values.manifests }}
+    {{- printf "%q" .Values.manifests | nindent 4 }}
