@@ -31,13 +31,14 @@ spec:
       serviceAccountName: {{ include "quorumkeymanager.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # initContainers:
-      #   - name: init-token
-      #     image: "alpine:3.14.0"
-      #     command: ["touch", "/vault/token/.vault-token"]
-      #     volumeMounts:
-      #       - name: vault-token
-      #         mountPath: /vault/token
+      # to avoid "not found" token issue at start
+      initContainers:
+        - name: init-token
+          image: "alpine:3.14.0"
+          command: ["touch", "/vault/token/.vault-token"]
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault/token
       containers:
         {{- if .Values.vaultAgent.enabled }}
         - name: vault-agent
