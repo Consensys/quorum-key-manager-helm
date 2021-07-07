@@ -8,13 +8,13 @@ image:
   repository: docker.consensys.net/pub/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "v21.1.7-alpha.1"
 
 nameOverride: ""
 fullnameOverride: ""
 
 imageCredentials:
-  create: true
+  create: false
   name: existing-secret
   registry: docker.consensys.net
   username: someone
