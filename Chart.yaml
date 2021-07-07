@@ -1,6 +1,6 @@
 apiVersion: v2
-name: qkm
-description: Quorum Key Manager
+name: quorumkeymanager
+description: Quorum Key Manager is a universal Key & Account Management solution for blockchain applications.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
