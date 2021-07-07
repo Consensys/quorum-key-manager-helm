@@ -33,12 +33,39 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       # to avoid "not found" token issue at start
       initContainers:
+        {{- if .Values.vaultAgent.enabled }}
         - name: init-token
-          image: "alpine:3.14.0"
-          command: ["touch", "/vault/token/.vault-token"]
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          image: "{{ .Values.vaultAgent.image.repository }}:{{ .Values.vaultAgent.image.tag }}"
+          args:
+            - "agent"
+            - "-config"
+            - "/vault/config/init-agent-config.hcl"
+          env:
+            - name: SKIP_CHOWN
+              value: "true"
+          {{- if or .Values.environment .Values.environmentSecrets }}
+          envFrom:
+            {{- if .Values.environment }}
+            - configMapRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-envmap
+                optional: true
+            {{- end }}
+            {{- if .Values.environmentSecrets }}
+            - secretRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-secretmap
+                optional: true
+            {{- end }}
+          {{- end }}
           volumeMounts:
             - name: vault-token
               mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+        {{- end }}
       containers:
         {{- if .Values.vaultAgent.enabled }}
         - name: vault-agent
