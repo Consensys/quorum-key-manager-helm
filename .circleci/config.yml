@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Push
           command: |
-            cloudsmith push helm consensys/helm ./quorum-key-manager-${CIRCLE_TAG}.tgz
+            cloudsmith push helm consensys/helm ./quorumkeymanager-${CIRCLE_TAG}.tgz
 
 commands:
   init:
