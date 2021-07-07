@@ -9,6 +9,23 @@ metadata:
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
 data:
+  init-agent-config.hcl: |
+    exit_after_auth = true
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "{{ .Values.vaultAgent.role }}"
+        }
+      }
+      sink "file" {
+        wrap_ttl = "{{ .Values.vaultAgent.config.wrapTTL }}"
+        config = {
+          path = "/vault/token/.vault-token"
+          mode = 0666
+        }
+      }
+    }
   agent-config.hcl: |
     auto_auth {
       method "kubernetes" {
