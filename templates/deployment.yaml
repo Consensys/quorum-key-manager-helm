@@ -133,6 +133,7 @@ spec:
           {{- if .Values.vaultAgent.enabled }}
             - name: vault-token
               mountPath: /vault/token
+              readOnly: true
           {{- end }}
             - name: manifests-config
               mountPath: /manifests
