@@ -1,4 +1,4 @@
-{{- if .Values.postgresql.tls.enabled }}
+{{- if .Values.postrgesql.tls.enabled }}
 ---
 apiVersion: v1
 kind: Secret
