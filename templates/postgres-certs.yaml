@@ -1,0 +1,19 @@
+{{- if .Values.postrgesql.tls.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "quorumkeymanager.fullname" . }}-postgres-certs
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  ca.crt: 
+    {{- printf "%q" .Values.postgresql.certs.ca | nindent 4 }}
+  client.crt:
+    {{- printf "%q" .Values.postgresql.certs.client.crt | nindent 4 }}
+  client.key:
+    {{- printf "%q" .Values.postgresql.certs.client.key | nindent 4 }}
+{{- end }}
