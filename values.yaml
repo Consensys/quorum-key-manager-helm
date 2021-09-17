@@ -121,3 +121,7 @@ vaultAgent:
 environment: {}
 
 environmentSecrets: {}
+
+postgresql:
+  tls:
+    enabled: true
