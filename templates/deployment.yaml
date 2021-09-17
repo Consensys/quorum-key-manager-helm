@@ -135,7 +135,7 @@ spec:
               mountPath: /vault/token
               readOnly: true
           {{- end }}
-          {{- if .Values.postgres.tls.enabled }}
+          {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
               mountPath: /postgres/certs
               readOnly: true
