@@ -10,10 +10,7 @@ metadata:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
 type: Opaque
 data:
-  ca.crt: 
-    {{- printf "%q" .Values.postgresql.certs.ca | nindent 4 }}
-  client.crt:
-    {{- printf "%q" .Values.postgresql.certs.client.crt | nindent 4 }}
-  client.key:
-    {{- printf "%q" .Values.postgresql.certs.client.key | nindent 4 }}
+  ca.crt: {{ .Values.postgresql.certs.ca }}
+  client.crt: {{ .Values.postgresql.certs.client.crt }}
+  client.key: {{ .Values.postgresql.certs.client.key }}
 {{- end }}
