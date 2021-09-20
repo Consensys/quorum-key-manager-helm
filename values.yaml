@@ -117,6 +117,13 @@ vaultAgent:
     tag: 1.8.2
   config:
     wrapTTL: ""
+  tls:
+    enabled: true
+  certs:
+    ca: ""
+    client:
+      crt: ""
+      key: ""
 
 environment: {}
 
