@@ -13,6 +13,12 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+imageCredentials:
+  create: false
+  name: existing-secret
+  registry: docker.consensys.net
+  username: someone
+  password: sillyness
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -111,11 +117,6 @@ vaultAgent:
     tag: 1.8.2
   config:
     wrapTTL: ""
-  certs:
-    ca: ""
-    client:
-      crt: ""
-      key: ""
 
 environment: {}
 
