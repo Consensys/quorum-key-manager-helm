@@ -65,6 +65,8 @@ spec:
               mountPath: /vault/token
             - name: vault-config
               mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
         {{- end }}
       containers:
         {{- if .Values.vaultAgent.enabled }}
@@ -99,6 +101,8 @@ spec:
               mountPath: /vault/token
             - name: vault-config
               mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
         {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
@@ -134,6 +138,9 @@ spec:
             - name: vault-token
               mountPath: /vault/token
               readOnly: true
+            - name: vault-tls
+              mountPath: /vault/tls
+              readOnly: true
           {{- end }}
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
@@ -160,6 +167,9 @@ spec:
         - name: vault-config
           configMap:
             name: {{ include "quorumkeymanager.fullname" . }}-vault-agent
+        - name: vault-tls
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-vault-certs
       {{- end }}
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
