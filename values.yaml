@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: hub.docker.com/consensys/quorum-key-manager
+  repository: docker.io/consensys/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v21.1.7-alpha.5"
