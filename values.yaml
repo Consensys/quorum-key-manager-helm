@@ -111,7 +111,7 @@ manifests: ""
 
 vaultAgent:
   enabled: true
-  role: "orchestrate-qkm"
+  role: "quorumkeymanager"
   image:
     repository: vault
     tag: 1.8.2
