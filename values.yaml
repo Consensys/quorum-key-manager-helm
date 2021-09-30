@@ -137,3 +137,16 @@ postgresql:
     client:
       crt: ""
       key: ""
+
+auth:
+  apikey:
+    enabled: false
+    file: "/apikey/sample.csv"
+  oidc:
+    enabled: false
+    cacert: ""
+    issuer: ""
+  tls:
+    enabled: false
+    cacert: ""
+    secretName: ""

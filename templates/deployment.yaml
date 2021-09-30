@@ -147,6 +147,16 @@ spec:
               mountPath: /postgres/certs
               readOnly: true
           {{- end }}
+          {{- if .Values.auth.apikey.enabled }}
+            - name: apikey-file
+              mountPath: /apikey
+              readOnly: true
+          {{- end }}
+          {{- if .Values.auth.tls.enabled }}
+            - name: qkm-certificates
+              mountPath: /certificates
+              readOnly: true
+          {{- end }}
             - name: manifests-config
               mountPath: /manifests
           livenessProbe:
@@ -175,6 +185,16 @@ spec:
         - name: postgres-certs
           secret:
             secretName: {{ include "quorumkeymanager.fullname" . }}-postgres-certs
+      {{- end }}
+      {{- if .Values.auth.apikey.enabled }}
+        - name: apikey-file
+          configMap:
+            name: {{ include "quorumkeymanager.fullname" . }}-apikey-file
+      {{- end }}
+      {{- if .Values.auth.tls.enabled }}
+        - name: qkm-certificates
+          secret:
+            secretName: {{ .Values.auth.tls.secretName }}
       {{- end }}
         - name: manifests-config
           secret:
