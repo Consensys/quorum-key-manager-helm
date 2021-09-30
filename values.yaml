@@ -144,9 +144,9 @@ auth:
     file: "/apikey/sample.csv"
   oidc:
     enabled: false
-    cacert: ""
+    ca: ""
     issuer: ""
   tls:
     enabled: false
-    cacert: ""
+    ca: ""
     secretName: ""

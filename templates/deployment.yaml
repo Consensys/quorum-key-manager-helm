@@ -153,8 +153,13 @@ spec:
               readOnly: true
           {{- end }}
           {{- if .Values.auth.tls.enabled }}
-            - name: qkm-certificates
+            - name: qkm-certs
               mountPath: /certificates
+              readOnly: true
+          {{- end }}
+          {{- if .Values.auth.oidc.enabled }}
+            - name: oidc-certs
+              mountPath: /oidc_certs
               readOnly: true
           {{- end }}
             - name: manifests-config
@@ -192,9 +197,14 @@ spec:
             name: {{ include "quorumkeymanager.fullname" . }}-apikey-file
       {{- end }}
       {{- if .Values.auth.tls.enabled }}
-        - name: qkm-certificates
+        - name: qkm-certs
           secret:
             secretName: {{ .Values.auth.tls.secretName }}
+      {{- end }}
+      {{- if .Values.auth.oidc.enabled }}
+        - name: oidc-certs
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-certs
       {{- end }}
         - name: manifests-config
           secret:
