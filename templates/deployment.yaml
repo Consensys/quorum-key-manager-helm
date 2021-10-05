@@ -166,10 +166,16 @@ spec:
               mountPath: /manifests
           livenessProbe:
             httpGet:
+          {{- if .Values.auth.tls.enabled }}
+              scheme: HTTPS
+          {{ end }}
               path: /live
               port: http-metrics
           readinessProbe:
             httpGet:
+          {{- if .Values.auth.tls.enabled }}
+              scheme: HTTPS
+          {{ end }}
               path: /ready
               port: http-metrics
           resources:
