@@ -65,6 +65,8 @@ spec:
               mountPath: /vault/token
             - name: vault-config
               mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
         {{- end }}
       containers:
         {{- if .Values.vaultAgent.enabled }}
@@ -99,6 +101,8 @@ spec:
               mountPath: /vault/token
             - name: vault-config
               mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
         {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
@@ -133,15 +137,49 @@ spec:
           {{- if .Values.vaultAgent.enabled }}
             - name: vault-token
               mountPath: /vault/token
+              readOnly: true
+            - name: vault-tls
+              mountPath: /vault/tls
+              readOnly: true
+          {{- end }}
+          {{- if .Values.postgresql.tls.enabled }}
+            - name: postgres-certs
+              mountPath: /postgres/certs
+              readOnly: true
+          {{- end }}
+          {{- if .Values.auth.apikey.enabled }}
+            - name: apikey-file
+              mountPath: /apikey
+              readOnly: true
+          {{- end }}
+          {{- if .Values.auth.tls.enabled }}
+            - name: qkm-certs
+              mountPath: /certificates
+              readOnly: true
+          {{- end }}
+          {{- if .Values.auth.oidc.enabled }}
+            - name: oidc-certs
+              mountPath: /oidc_certs
+              readOnly: true
           {{- end }}
             - name: manifests-config
               mountPath: /manifests
+            - name: ca-store
+              mountPath: /etc/ssl/certs/others.pem
+              subPath: others.pem
+              readOnly: false
           livenessProbe:
             httpGet:
+          {{- if .Values.auth.tls.enabled }}
+              scheme: HTTPS
+          {{ end }}
               path: /live
               port: http-metrics
           readinessProbe:
             httpGet:
+          {{- if .Values.auth.tls.enabled }}
+              scheme: HTTPS
+          {{ end }}
               path: /ready
               port: http-metrics
           resources:
@@ -154,10 +192,36 @@ spec:
         - name: vault-config
           configMap:
             name: {{ include "quorumkeymanager.fullname" . }}-vault-agent
+        - name: vault-tls
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-vault-certs
+      {{- end }}
+      {{- if .Values.postgresql.tls.enabled }}
+        - name: postgres-certs
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-postgres-certs
+      {{- end }}
+      {{- if .Values.auth.apikey.enabled }}
+        - name: apikey-file
+          configMap:
+            name: {{ include "quorumkeymanager.fullname" . }}-apikey-file
+      {{- end }}
+      {{- if .Values.auth.tls.enabled }}
+        - name: qkm-certs
+          secret:
+            secretName: {{ .Values.auth.tls.secretName }}
+      {{- end }}
+      {{- if .Values.auth.oidc.enabled }}
+        - name: oidc-certs
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-certs
       {{- end }}
         - name: manifests-config
           secret:
             secretName: {{ include "quorumkeymanager.fullname" . }}-manifests
+        - name: ca-store
+          configMap:
+            name: {{ include "quorumkeymanager.fullname" . }}-other-certs
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

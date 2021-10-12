@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: docker.consensys.net/pub/quorum-key-manager
+  repository: docker.io/consensys/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v21.1.7-alpha.1"
+  tag: "v21.9.1"
 
 nameOverride: ""
 fullnameOverride: ""
@@ -111,13 +111,44 @@ manifests: ""
 
 vaultAgent:
   enabled: true
-  role: "orchestrate-qkm"
+  role: "quorumkeymanager"
   image:
     repository: vault
-    tag: 1.6.2
+    tag: 1.8.2
   config:
     wrapTTL: ""
+  tls:
+    enabled: true
+  certs:
+    ca: ""
+    client:
+      crt: ""
+      key: ""
 
 environment: {}
 
 environmentSecrets: {}
+
+postgresql:
+  tls:
+    enabled: true
+  certs:
+    ca: ""
+    client:
+      crt: ""
+      key: ""
+
+auth:
+  apikey:
+    enabled: false
+    file: "/apikey/sample.csv"
+  oidc:
+    enabled: false
+    ca: ""
+    issuer: ""
+  tls:
+    enabled: false
+    ca: ""
+    secretName: ""
+
+certificates: ""

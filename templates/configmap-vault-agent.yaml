@@ -21,8 +21,8 @@ data:
       sink "file" {
         wrap_ttl = "{{ .Values.vaultAgent.config.wrapTTL }}"
         config = {
-          path = "/vault/token/.vault-token"
-          mode = 0666
+          path = "/vault/token/.agent-vault-token"
+          mode = 0444
         }
       }
     }
@@ -37,8 +37,8 @@ data:
       sink "file" {
         wrap_ttl = "{{ .Values.vaultAgent.config.wrapTTL }}"
         config = {
-          path = "/vault/token/.vault-token"
-          mode = 0666
+          path = "/vault/token/.agent-vault-token"
+          mode = 0444
         }
       }
     }

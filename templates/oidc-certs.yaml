@@ -1,0 +1,14 @@
+{{- if .Values.auth.oidc.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "quorumkeymanager.fullname" . }}-oidc-certs
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  ca.crt: {{ .Values.auth.oidc.ca }}
+{{- end }}
