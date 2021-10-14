@@ -31,79 +31,7 @@ spec:
       serviceAccountName: {{ include "quorumkeymanager.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # to avoid "not found" token issue at start
-      initContainers:
-        {{- if .Values.vaultAgent.enabled }}
-        - name: init-token
-          securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
-          image: "{{ .Values.vaultAgent.image.repository }}:{{ .Values.vaultAgent.image.tag }}"
-          args:
-            - "agent"
-            - "-config"
-            - "/vault/config/init-agent-config.hcl"
-          env:
-            - name: SKIP_CHOWN
-              value: "true"
-          {{- if or .Values.environment .Values.environmentSecrets }}
-          envFrom:
-            {{- if .Values.environment }}
-            - configMapRef:
-                name: {{ include "quorumkeymanager.fullname" . }}-envmap
-                optional: true
-            {{- end }}
-            {{- if .Values.environmentSecrets }}
-            - secretRef:
-                name: {{ include "quorumkeymanager.fullname" . }}-secretmap
-                optional: true
-            {{- end }}
-          {{- end }}
-          volumeMounts:
-            - name: vault-token
-              mountPath: /vault/token
-            - name: vault-config
-              mountPath: /vault/config
-            - name: vault-tls
-              mountPath: /vault/tls
-        {{- end }}
       containers:
-        {{- if .Values.vaultAgent.enabled }}
-        - name: vault-agent
-          securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
-          image: "{{ .Values.vaultAgent.image.repository }}:{{ .Values.vaultAgent.image.tag }}"
-          args:
-            - "agent"
-            - "-config"
-            - "/vault/config/agent-config.hcl"
-          env:
-            - name: SKIP_CHOWN
-              value: "true"
-          {{- if or .Values.environment .Values.environmentSecrets }}
-          envFrom:
-            {{- if .Values.environment }}
-            - configMapRef:
-                name: {{ include "quorumkeymanager.fullname" . }}-envmap
-                optional: true
-            {{- end }}
-            {{- if .Values.environmentSecrets }}
-            - secretRef:
-                name: {{ include "quorumkeymanager.fullname" . }}-secretmap
-                optional: true
-            {{- end }}
-          {{- end }}
-          volumeMounts:
-            - name: vault-token
-              mountPath: /vault/token
-            - name: vault-config
-              mountPath: /vault/config
-            - name: vault-tls
-              mountPath: /vault/tls
-        {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -133,15 +61,7 @@ spec:
             - name: http-metrics
               containerPort: 8081
               protocol: TCP
-          volumeMounts:
-          {{- if .Values.vaultAgent.enabled }}
-            - name: vault-token
-              mountPath: /vault/token
-              readOnly: true
-            - name: vault-tls
-              mountPath: /vault/tls
-              readOnly: true
-          {{- end }}
+          volumeMounts:    
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
               mountPath: /postgres/certs
@@ -185,17 +105,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      {{- if .Values.vaultAgent.enabled }}
-        - name: vault-token
-          emptyDir:
-            sizeLimit: 1M
-        - name: vault-config
-          configMap:
-            name: {{ include "quorumkeymanager.fullname" . }}-vault-agent
-        - name: vault-tls
-          secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-vault-certs
-      {{- end }}
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
           secret:
@@ -218,10 +127,7 @@ spec:
       {{- end }}
         - name: manifests-config
           secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests
-        - name: ca-store
-          configMap:
-            name: {{ include "quorumkeymanager.fullname" . }}-other-certs
+            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests      
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
