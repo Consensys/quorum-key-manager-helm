@@ -109,21 +109,6 @@ manifests: ""
 #       tessera:
 #         addr: http://quorum-node1.quorum:9080
 
-vaultAgent:
-  enabled: true
-  role: "quorumkeymanager"
-  image:
-    repository: vault
-    tag: 1.8.2
-  config:
-    wrapTTL: ""
-  tls:
-    enabled: true
-  certs:
-    ca: ""
-    client:
-      crt: ""
-      key: ""
 
 environment: {}
 
