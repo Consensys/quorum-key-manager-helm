@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "quorumkeymanager.fullname" . }}-other-certs
+  name: {{ include "quorumkeymanager.fullname" . }}-ca-certs
   labels:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
 data:
-  others.pem: {{ .Values.certificates }}
+  qkm-certs.pem: {{ .Values.certificates }}
     
