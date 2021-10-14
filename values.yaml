@@ -135,5 +135,3 @@ auth:
     enabled: false
     ca: ""
     secretName: ""
-
-certificates: ""

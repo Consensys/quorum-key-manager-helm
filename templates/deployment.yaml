@@ -84,10 +84,6 @@ spec:
           {{- end }}
             - name: manifests-config
               mountPath: /manifests
-            - name: ca-store
-              mountPath: /etc/ssl/certs/qkm-certs.pem
-              subPath: qkm-certs.pem
-              readOnly: false
           livenessProbe:
             httpGet:
           {{- if .Values.auth.tls.enabled }}
@@ -127,10 +123,7 @@ spec:
       {{- end }}
         - name: manifests-config
           secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests
-        - name: ca-store
-          configMap:
-            name: {{ include "quorumkeymanager.fullname" . }}-other-certs
+            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests      
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
