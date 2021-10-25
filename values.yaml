@@ -8,7 +8,7 @@ image:
   repository: docker.io/consensys/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v21.9.1"
+  tag: "v21.9.2"
 
 nameOverride: ""
 fullnameOverride: ""
@@ -126,11 +126,13 @@ postgresql:
 auth:
   apikey:
     enabled: false
+    contents: ""
     file: "/apikey/sample.csv"
   oidc:
     enabled: false
     ca: ""
     issuer: ""
+    pubKey: ""
   tls:
     enabled: false
     ca: ""

@@ -81,6 +81,9 @@ spec:
             - name: oidc-certs
               mountPath: /oidc_certs
               readOnly: true
+            - name: oidc-pubkey
+              mountPath: /oidc_pub
+              readOnly: true
           {{- end }}
             - name: manifests-config
               mountPath: /manifests
@@ -120,6 +123,9 @@ spec:
         - name: oidc-certs
           secret:
             secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-certs
+        - name: oidc-pubkey
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-pubkey
       {{- end }}
         - name: manifests-config
           secret:
