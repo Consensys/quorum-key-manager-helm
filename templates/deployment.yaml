@@ -124,8 +124,8 @@ spec:
           secret:
             secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-certs
         - name: oidc-pubkey
-          secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-pubkey
+          configMap:
+            name: {{ include "quorumkeymanager.fullname" . }}-oidc-pubkey
       {{- end }}
         - name: manifests-config
           secret:
