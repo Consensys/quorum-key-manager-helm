@@ -10,6 +10,6 @@ metadata:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
 type: Opaque
 data:
-  oidc.pub: {{ printf "%s" .Values.auth.oidc.pubKey }}
+  oidc.pub: {{ .Values.auth.oidc.pubKey }}
 
 {{- end }}
