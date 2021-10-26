@@ -21,4 +21,7 @@ data:
   api-keys.csv: |
     {{ printf "%q" .Values.auth.apikey.contents | nindent 4 }}
 
+  api-keys1.csv: |
+    {{ printf "%s" .Values.auth.apikey.contents | nindent 4 }}
+
 {{- end }}
