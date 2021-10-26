@@ -70,3 +70,13 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `environment`                                        | Environment variables passed to Quorum Key Manager containers                                                          | `{}`                                          |
 | `environmentSecrets`                                 | Environment variables (as Kubernetes secrets) passed to Quorum Key Manager containers                                  | `{}`                                          |
 | `manifests`                                          | List of manifests to be loaded by the Quorumm Key Manager                                                              | ``                                            |
+| `auth.apikey.enabled`                                          | Is authentication based on passing an API-KEY enabled                                                              | `true`|
+| `auth.apikey.file`                                          | file path to the api keys file                                                             | `/apikey/api-keys.csv`|
+| `auth.apikey.contents`                                          | contents of your api-keys file formatted according to the provided `sample.csv`                                                             | `""`|
+| `auth.oidc.enabled`                                          | Is authentication based on OIDC / OAuth2 remote service enabled                                                              | `true`|
+| `auth.oidc.issuer`                                          | The .well-known configuration url to your jwks file                                                              | `""`|
+| `auth.oidc.pubKey`                                          | The public key that verifies your jwt tokens                                                              | `""`|
+| `auth.tls.enabled`                                          | Is authentication based on client certificates
+enabled                                                              | `true`| 
+| `auth.tls.secretName`                                          | k8s secret name that holds the auth server certificate + key                                                              | `qkm-tls`|
+| `auth.tls.cacert`                                          | the CA certifcates file contents                                                              | `""`|
