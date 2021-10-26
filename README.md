@@ -78,4 +78,4 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `auth.oidc.pubKey`                                          | The public key that verifies your jwt tokens                                                              | `""`|
 | `auth.tls.enabled`                                          | Is authentication based on client certificates enabled                                                              | `true`|
 | `auth.tls.secretName`                                          | k8s secret name that holds the auth server certificate + key                                                              | `qkm-tls`|
-| `auth.tls.cacert`                                          | the CA certifcates file contents                                                              | `""`|
+| `auth.tls.cacert`                                          | the CA certificates file contents                                                              | `""`|
