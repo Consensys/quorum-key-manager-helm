@@ -1,15 +1,16 @@
 {{- if .Values.auth.oidc.enabled }}
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: {{ include "quorumkeymanager.fullname" . }}-oidc-pubkey
   labels:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+type: Opaque
 data:
   oidc.pub: |
-    {{ printf "%q" .Values.auth.oidc.pubKey | nindent 4 }}
+    {{ printf "%s" .Values.auth.oidc.pubKey | nindent 4 }}
 
 {{- end }}
