@@ -76,7 +76,6 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `auth.oidc.enabled`                                          | Is authentication based on OIDC / OAuth2 remote service enabled                                                              | `true`|
 | `auth.oidc.issuer`                                          | The .well-known configuration url to your jwks file                                                              | `""`|
 | `auth.oidc.pubKey`                                          | The public key that verifies your jwt tokens                                                              | `""`|
-| `auth.tls.enabled`                                          | Is authentication based on client certificates
-enabled                                                              | `true`| 
+| `auth.tls.enabled`                                          | Is authentication based on client certificates enabled                                                              | `true`|
 | `auth.tls.secretName`                                          | k8s secret name that holds the auth server certificate + key                                                              | `qkm-tls`|
 | `auth.tls.cacert`                                          | the CA certifcates file contents                                                              | `""`|
