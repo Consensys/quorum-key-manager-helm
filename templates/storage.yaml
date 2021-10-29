@@ -1,0 +1,9 @@
+{{- if .Values.storage.nfs.enabled }}
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: {{ template "quorumkeymanager.fullname" . }}-efnfss-sc
+provisioner: {{ .Values.storage.nfs.provisioner }}
+
+{{- end }}

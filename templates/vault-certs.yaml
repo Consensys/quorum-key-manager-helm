@@ -1,0 +1,15 @@
+{{- if gt (len .Values.vault.agents) 0 }}
+{{- range .Values.vault.agents }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: qkm-agent-secret-{{ .name }}
+
+type: Opaque
+data:
+  ca.crt: {{ .ca }}
+  client.crt: {{ .crt }}
+  client.key: {{ .key }}
+{{- end }}
+{{- end }}

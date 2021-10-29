@@ -137,3 +137,16 @@ auth:
     enabled: false
     ca: ""
     secretName: ""
+
+vault:
+  tls:
+    enabled: true
+  agents: {}
+  
+storage:
+  nfs:
+    driver: efs.csi.aws.com
+    provisioner: efs.csi.aws.com{ 
+    enabled: true
+    fsID: ""
+    mountPath: /vault/token
