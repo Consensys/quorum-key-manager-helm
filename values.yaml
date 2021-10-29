@@ -137,3 +137,13 @@ auth:
     enabled: false
     ca: ""
     secretName: ""
+
+vault:
+  tls:
+    enabled: true
+  agents: {}
+storage:
+  efs:
+    enabled: true
+    fsID: ""
+    mountPath: /vault/token

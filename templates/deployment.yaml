@@ -61,7 +61,17 @@ spec:
             - name: http-metrics
               containerPort: 8081
               protocol: TCP
-          volumeMounts:    
+          volumeMounts:
+          {{- if .Values.storage.efs.enabled }}
+            - name: vault-token
+              mountPath: {{ .Values.storage.efs.mountPath }}
+          {{- end }}
+          {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
+          {{- range .Values.vault.agents }}
+            - name: agent-secret-{{ .name }}
+              mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}     
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
               mountPath: /postgres/certs
@@ -104,6 +114,18 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+      {{- if .Values.storage.efs.enabled }}
+        - name: vault-token
+          persistentVolumeClaim:
+            claimName: {{ include "quorumkeymanager.fullname" . }}-efs-claim
+      {{- end }}
+      {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
+      {{- range .Values.vault.agents }}
+        - name: agent-secret-{{ .name }}
+          secret:
+            secretName: qkm-agent-secret-{{ .name }}
+      {{- end }}
+      {{- end }} 
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
           secret:
