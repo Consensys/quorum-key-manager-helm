@@ -1,0 +1,19 @@
+{{- if .Values.storage.efs.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ template "quorumkeymanager.fullname" . }}-efs-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ template "quorumkeymanager.fullname" . }}-efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: {{ .Values.storage.efs.fsID }}
+
+{{- end }}
