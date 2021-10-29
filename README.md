@@ -79,3 +79,13 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `auth.tls.enabled`                                          | Is authentication based on client certificates enabled                                                              | `true`|
 | `auth.tls.secretName`                                          | k8s secret name that holds the auth server certificate + key                                                              | `qkm-tls`|
 | `auth.tls.cacert`                                          | the CA certificates file contents                                                              | `""`|
+| `vault.tls.enabled`                                          | At least one agent requires tls activated                                                              | `true`|
+| `vault.agents`                                          | Vault agents descriptors array                                                              | `{}`|
+| `vault.agents[0].name`                                          | name of one vault agent in the array                                                              | `""`|
+| `vault.agents[0].ca`                                          | base64 ca crt of one vault agent in the array                                                              | `""`|
+| `vault.agents[0].crt`                                          | base64 tls certificate of one vault agent in the array                                                              | `""`|
+| `vault.agents[0].key`                                          | base64 tls key of one vault agent in the array                                                              | `""`|
+| `vault.agents[0].mountPath`                                          | mount path of tls files of one vault agent in the array                                                              | `""`|
+| `storage.efs.enabled`                                          | Aws Elastik File System is enabled                                                              | `true`|
+| `storage.efs.fsID`                                          | Your efs filesystem IDentifier as found in your aws account                                                              | `[]`|
+| `storage.efs.mountPath`                                          | mount path of the shared storage common to qkm and agents                                                              | `/vault/token`|
