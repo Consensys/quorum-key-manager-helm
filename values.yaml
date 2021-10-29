@@ -142,8 +142,11 @@ vault:
   tls:
     enabled: true
   agents: {}
+  
 storage:
-  efs:
+  nfs:
+    driver: efs.csi.aws.com
+    provisioner: efs.csi.aws.com{ 
     enabled: true
     fsID: ""
     mountPath: /vault/token

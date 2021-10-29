@@ -62,9 +62,9 @@ spec:
               containerPort: 8081
               protocol: TCP
           volumeMounts:
-          {{- if .Values.storage.efs.enabled }}
+          {{- if .Values.storage.nfs.enabled }}
             - name: vault-token
-              mountPath: {{ .Values.storage.efs.mountPath }}
+              mountPath: {{ .Values.storage.nfs.mountPath }}
           {{- end }}
           {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
           {{- range .Values.vault.agents }}
@@ -114,10 +114,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      {{- if .Values.storage.efs.enabled }}
+      {{- if .Values.storage.nfs.enabled }}
         - name: vault-token
           persistentVolumeClaim:
-            claimName: {{ include "quorumkeymanager.fullname" . }}-efs-claim
+            claimName: {{ include "quorumkeymanager.fullname" . }}-nfs-claim
       {{- end }}
       {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
       {{- range .Values.vault.agents }}

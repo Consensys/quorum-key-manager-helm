@@ -1,13 +1,13 @@
-{{- if .Values.storage.efs.enabled }}
+{{- if .Values.storage.nfs.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ template "quorumkeymanager.fullname" . }}-efs-claim
+  name: {{ template "quorumkeymanager.fullname" . }}-nfs-claim
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ template "quorumkeymanager.fullname" . }}-efs-sc
+  storageClassName: {{ template "quorumkeymanager.fullname" . }}-nfs-sc
   resources:
     requests:
       storage: 1Gi

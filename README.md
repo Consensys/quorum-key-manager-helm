@@ -86,6 +86,8 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `vault.agents[0].crt`                                          | base64 tls certificate of one vault agent in the array                                                              | `""`|
 | `vault.agents[0].key`                                          | base64 tls key of one vault agent in the array                                                              | `""`|
 | `vault.agents[0].mountPath`                                          | mount path of tls files of one vault agent in the array                                                              | `""`|
-| `storage.efs.enabled`                                          | Aws Elastik File System is enabled                                                              | `true`|
-| `storage.efs.fsID`                                          | Your efs filesystem IDentifier as found in your aws account                                                              | `[]`|
-| `storage.efs.mountPath`                                          | mount path of the shared storage common to qkm and agents                                                              | `/vault/token`|
+| `storage.nfs.enabled`                                          | Aws Elastik File System is enabled                                                              | `true`|
+| `storage.nfs.fsID`                                          | Your nfs filesystem IDentifier as found in your aws account                                                              | `[]`|
+| `storage.nfs.mountPath`                                          | mount path of the shared storage common to qkm and agents                                                              | `/vault/token`|
+| `storage.nfs.driver`                                          | Your nfs filesystem driver                                                              | `efs.csi.aws.com`|
+| `storage.nfs.provisioner`                                          | Your nfs file system provisioner                                                              | `efs.csi.aws.com`|

@@ -1,9 +1,9 @@
-{{- if .Values.storage.efs.enabled }}
+{{- if .Values.storage.nfs.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ template "quorumkeymanager.fullname" . }}-efs-pv
+  name: {{ template "quorumkeymanager.fullname" . }}-nfs-pv
 spec:
   capacity:
     storage: 1Gi
@@ -11,9 +11,9 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: {{ template "quorumkeymanager.fullname" . }}-efs-sc
+  storageClassName: {{ template "quorumkeymanager.fullname" . }}-nfs-sc
   csi:
-    driver: efs.csi.aws.com
-    volumeHandle: {{ .Values.storage.efs.fsID }}
+    driver: {{ .Values.storage.nfs.driver }}
+    volumeHandle: {{ .Values.storage.nfs.fsID }}
 
 {{- end }}
