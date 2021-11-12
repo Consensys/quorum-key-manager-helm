@@ -1,0 +1,41 @@
+{{- range .Values.vault.agents }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qkm-vault-agent-{{ .name }}-cm
+data:
+  init-agent-config-{{ .name }}.hcl: |
+    exit_after_auth = true
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "{{ .config.role }}"
+        }
+      }
+      sink "file" {
+        wrap_ttl = "{{ .config.wrapTTL }}"
+        config = {
+          path = "/vault/token/.agent-{{ .name }}-vault-token"
+          mode = 0444
+        }
+      }
+    }
+  agent-config-{{ .name }}.hcl: |
+    auto_auth {
+      method "kubernetes" {
+        mount_path = "auth/kubernetes"
+        config = {
+          role = "{{ .config.role }}"
+        }
+      }
+      sink "file" {
+        wrap_ttl = "{{ .config.wrapTTL }}"
+        config = {
+          path = "/vault/token/.agent-{{ .name }}-vault-token"
+          mode = 0444
+        }
+      }
+    }
+{{- end }}

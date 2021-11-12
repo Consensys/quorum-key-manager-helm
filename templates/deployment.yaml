@@ -31,7 +31,77 @@ spec:
       serviceAccountName: {{ include "quorumkeymanager.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- if gt (len .Values.vault.agents) 0 }}
+        {{- $environment := .Values.environment }}
+        {{- $environmentSecrets := .Values.environmentSecrets }}
+        {{- range .Values.vault.agents }}
+        {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
+        - name: init-token
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          image: {{ $agentImage }}
+          args:
+            - "agent"
+            - "-config"
+            - "/vault/config/init-agent-config-{{ .name }}.hcl"
+          env:
+            - name: SKIP_CHOWN
+              value: "true"
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
+        {{- end }}
+        {{- end }}
       containers:
+        {{- if gt (len .Values.vault.agents) 0 }}
+        {{- $configMap := printf "%s-%s" (include "quorumkeymanager.fullname" . ) "envmap" -}}
+        {{- $secret :=  printf "%s-%s" (include "quorumkeymanager.fullname" .) "secretmap" -}}
+        {{- $environment := .Values.environment -}}
+        {{- $environmentSecrets := .Values.environmentSecrets -}}
+        {{- range .Values.vault.agents }}
+        {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
+        - name: vault-agent-{{ .name }}
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          image: {{ $agentImage }}
+          args:
+            - "agent"
+            - "-config"
+            - "/vault/config/agent-config-{{ .name }}.hcl"
+          env:
+            - name: SKIP_CHOWN
+              value: "true"
+          {{- if or $environment $environmentSecrets }}
+          envFrom:
+            {{- if $environment }}
+            - configMapRef:
+                name: {{ $configMap }}
+                optional: true
+            {{- end }}
+            {{- if $environmentSecrets }}
+            - secretRef:
+                name: {{ $secret }}
+                optional: true
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+            - name: vault-tls
+              mountPath: /vault/tls
+        {{- end }}
+        {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -62,9 +132,9 @@ spec:
               containerPort: 8081
               protocol: TCP
           volumeMounts:
-          {{- if .Values.storage.nfs.enabled }}
+          {{- if or .Values.storage.nfs.enabled .Values.storage.existing }}
             - name: vault-token
-              mountPath: {{ .Values.storage.nfs.mountPath }}
+              mountPath: {{ .Values.storage.mountPath }}
           {{- end }}
           {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
           {{- range .Values.vault.agents }}
