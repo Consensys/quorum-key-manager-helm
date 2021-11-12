@@ -8,7 +8,10 @@ image:
   repository: docker.io/consensys/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v21.9.2"
+  tag: "v21.9.3"
+
+environment: {}
+environmentSecrets: {}
 
 nameOverride: ""
 fullnameOverride: ""
@@ -109,11 +112,6 @@ manifests: ""
 #       tessera:
 #         addr: http://quorum-node1.quorum:9080
 
-
-environment: {}
-
-environmentSecrets: {}
-
 postgresql:
   tls:
     enabled: true
@@ -142,11 +140,13 @@ vault:
   tls:
     enabled: true
   agents: {}
+    
 
 storage:
+  existing:
   nfs:
     driver: efs.csi.aws.com
     provisioner: efs.csi.aws.com 
     enabled: true
     fsID: ""
-    mountPath: /vault/token
+  mountPath: /vault/token
