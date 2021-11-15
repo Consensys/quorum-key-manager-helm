@@ -132,11 +132,11 @@ spec:
               containerPort: 8081
               protocol: TCP
           volumeMounts:
-          {{- if or .Values.storage.nfs.enabled .Values.storage.existing }}
+          {{- if or .Values.storage.nfs.enabled .Values.storage.existingPvc }}
             - name: vault-token
               mountPath: {{ .Values.storage.mountPath }}
           {{- end }}
-          {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
+          {{- if .Values.vault.tls.enabled }}
           {{- range .Values.vault.agents }}
             - name: agent-secret-{{ .name }}
               mountPath: {{ .mountPath }}
@@ -184,12 +184,16 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      {{- if .Values.storage.nfs.enabled }}
+      {{- if or .Values.storage.nfs.enabled .Values.storage.existingPvc }}
         - name: vault-token
           persistentVolumeClaim:
+        {{- if .Values.storage.nfs.enabled }}
             claimName: {{ include "quorumkeymanager.fullname" . }}-nfs-claim
+        {{ else }}
+            claimName: {{ .Values.storage.existingPvc }}
+        {{ end }}
       {{- end }}
-      {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
+      {{- if .Values.vault.tls.enabled }}
       {{- range .Values.vault.agents }}
         - name: agent-secret-{{ .name }}
           secret:

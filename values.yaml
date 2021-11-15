@@ -143,10 +143,10 @@ vault:
     
 
 storage:
-  existing:
+  existingPvc: ""
   nfs:
+    enabled: false
     driver: efs.csi.aws.com
     provisioner: efs.csi.aws.com 
-    enabled: true
     fsID: ""
   mountPath: /vault/token
