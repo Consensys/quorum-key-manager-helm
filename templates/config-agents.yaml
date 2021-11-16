@@ -1,10 +1,10 @@
-{{- range .Values.vault.agents }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: qkm-vault-agent-{{ .name }}-cm
+  name: qkm-vault-agent-cm
 data:
+{{- range .Values.vault.agents }}
   init-agent-config-{{ .name }}.hcl: |
     exit_after_auth = true
     auto_auth {
