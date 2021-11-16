@@ -1,13 +1,13 @@
-{{- range .Values.vault.agents }}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: qkm-agent-secret-{{ .name }}
+  name: qkm-vault-agent-secret
 
 type: Opaque
 data:
-  ca.crt: {{ .ca }}
-  client.crt: {{ .crt }}
-  client.key: {{ .key }}
+{{- range .Values.vault.agents }}
+  {{ .name }}-ca.crt: {{ .ca }}
+  {{ .name }}-client.crt: {{ .crt }}
+  {{ .name }}-client.key: {{ .key }}
 {{- end }}
