@@ -143,7 +143,6 @@ vault:
     
 
 storage:
-  existingPvc: ""
   nfs:
     enabled: false
     driver: efs.csi.aws.com
