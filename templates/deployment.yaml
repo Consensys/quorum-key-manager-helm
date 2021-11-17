@@ -34,7 +34,7 @@ spec:
       initContainers:
         {{- if .Values.vault.agents }}
         {{- $environment := .Values.environment }}
-        {{- $tls := .Values.vault.tls.enabled -}}
+        {{- $tls := .Values.vault.tls.enabled }}
         {{- $environmentSecrets := .Values.environmentSecrets }}
         {{- range .Values.vault.agents }}
         {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
@@ -66,8 +66,10 @@ spec:
               mountPath: /vault/token
             - name: vault-config
               mountPath: /vault/config
+          {{- if $tls }}
             - name: vault-tls
               mountPath: /vault/tls
+          {{- end }}
         {{- end }}
         {{- end }}
       containers:

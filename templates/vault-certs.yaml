@@ -1,3 +1,4 @@
+{{- if .Values.vault.tls.enabled }}
 ---
 apiVersion: v1
 kind: Secret
@@ -10,4 +11,5 @@ data:
   {{ .name }}-ca.crt: {{ .ca }}
   {{ .name }}-client.crt: {{ .crt }}
   {{ .name }}-client.key: {{ .key }}
+{{- end }}
 {{- end }}
