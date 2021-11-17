@@ -153,3 +153,5 @@ storage:
 migrate:
   enabled: true
   backoffLimit: 6
+  environment: {}
+  environmentSecrets: {}

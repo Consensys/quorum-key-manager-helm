@@ -12,10 +12,10 @@ metadata:
   labels:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
 data:
-{{- range $key,$value := .Values.environment }}
+{{- range $key,$value := .Values.migrate.environment }}
   {{ $key }}: {{ $value | quote }}
 {{- end }}
-{{- if .Values.environmentSecrets }}
+{{- if .Values.migrate.environmentSecrets }}
 ---
 apiVersion: v1
 kind: Secret
@@ -30,7 +30,7 @@ metadata:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
 type: Opaque
 data:
-{{- range $key,$value := .Values.environmentSecrets }}
+{{- range $key,$value := .Values.migrate.environmentSecrets }}
   {{ $key }}: {{ $value | b64enc | quote }}
 {{- end }}
 {{- end }}
@@ -73,7 +73,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "quorumkeymanager.fullname" . }}-hook-envmap
-            {{- if .Values.environmentSecrets }}
+            {{- if .Values.migrate.environmentSecrets }}
             - secretRef:
                 name: {{ include "quorumkeymanager.fullname" . }}-hook-secretmap
                 optional: true
