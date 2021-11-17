@@ -62,11 +62,14 @@ spec:
       containers:
         - name: {{ template "quorumkeymanager.fullname" . }}-initdb
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
-            - /run
+            - /main
           args:
             - migrate
+            - up
           envFrom:
             - configMapRef:
                 name: {{ include "quorumkeymanager.fullname" . }}-hook-envmap
@@ -75,5 +78,17 @@ spec:
                 name: {{ include "quorumkeymanager.fullname" . }}-hook-secretmap
                 optional: true
             {{- end }}
+          volumeMounts:
+          {{- if .Values.postgresql.tls.enabled }}
+            - name: postgres-certs
+              mountPath: /postgres/certs
+              readOnly: true
+          {{- end }}
+      volumes:
+      {{- if .Values.postgresql.tls.enabled }}
+        - name: postgres-certs
+          secret:
+            secretName: {{ include "quorumkeymanager.fullname" . }}-postgres-certs
+      {{- end }}
             
 {{- end }}
