@@ -149,3 +149,7 @@ storage:
     provisioner: efs.csi.aws.com 
     fsID: ""
   mountPath: /vault/token
+
+migrate:
+  enabled: true
+  backoffLimit: 6
