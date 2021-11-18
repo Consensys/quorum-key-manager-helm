@@ -213,16 +213,15 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: vault-token
-      {{- if empty .Values.storage.existingPvc }}
-          emptyDir: {}
-        {{ else }}
+      {{- if or .Values.storage.existingPvc .Values.storage.nfs.enabled }}
           persistentVolumeClaim:
         {{ if .Values.storage.nfs.enabled  }}
             claimName: {{ include "quorumkeymanager.fullname" . }}-nfs-claim
         {{ else }}
             claimName: {{ .Values.storage.existingPvc }}
-        
-        {{- end }}
+        {{- end }}  
+      {{ else }}
+          emptyDir: {}
       {{- end }}
       {{- if .Values.vault.agents }}
         - name: vault-config
