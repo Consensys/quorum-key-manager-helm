@@ -151,7 +151,6 @@ storage:
   mountPath: /vault/token
 
 migrate:
-  enabled: true
   backoffLimit: 6
   environment: {}
   environmentSecrets: {}
