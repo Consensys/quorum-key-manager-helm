@@ -31,7 +31,104 @@ spec:
       serviceAccountName: {{ include "quorumkeymanager.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- if .Values.vault.agents }}
+        {{- $environment := .Values.environment }}
+        {{- $tls := .Values.vault.tls.enabled }}
+        {{- $environmentSecrets := .Values.environmentSecrets }}
+        {{- range .Values.vault.agents }}
+        {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
+        - name: init-token-{{ .name }}
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          image: {{ $agentImage }}
+          args:
+            - "agent"
+            - "-config"
+            - "/vault/config/init-agent-config-{{ .name }}.hcl"
+          env:
+            - name: VAULT_ADDR
+              value: "{{ .vaultAddress }}"
+          {{- if $tls }}
+            - name: VAULT_CACERT
+              value: /vault/tls/{{ .name }}-ca.crt
+            - name: VAULT_CLIENT_KEY
+              value: /vault/tls/{{ .name }}-client.key
+            - name: VAULT_CLIENT_CERT
+              value: /vault/tls/{{ .name }}-client.crt
+          {{- end }}
+            - name: SKIP_CHOWN
+              value: "true"
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+          {{- if $tls }}
+            - name: vault-tls
+              mountPath: /vault/tls
+          {{- end }}
+        {{- end }}
+        {{- end }}
       containers:
+        {{- if .Values.vault.agents }}
+        {{- $configMap := printf "%s-%s" (include "quorumkeymanager.fullname" . ) "envmap" -}}
+        {{- $secret :=  printf "%s-%s" (include "quorumkeymanager.fullname" .) "secretmap" -}}
+        {{- $environment := .Values.environment -}}
+        {{- $tls := .Values.vault.tls.enabled -}}
+        {{- $environmentSecrets := .Values.environmentSecrets -}}
+        {{- range .Values.vault.agents }}
+        {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
+        - name: vault-agent-{{ .name }}
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          image: {{ $agentImage }}
+          args:
+            - "agent"
+            - "-config"
+            - "/vault/config/agent-config-{{ .name }}.hcl"
+          env:
+            - name: VAULT_ADDR
+              value: {{ .vaultAddress }}
+          {{- if $tls }}
+            - name: VAULT_CACERT
+              value: /vault/tls/{{ .name }}-ca.crt
+            - name: VAULT_CLIENT_KEY
+              value: /vault/tls/{{ .name }}-client.key
+            - name: VAULT_CLIENT_CERT
+              value: /vault/tls/{{ .name }}-client.crt
+          {{- end }}
+            - name: SKIP_CHOWN
+              value: "true"
+          {{- if or $environment $environmentSecrets }}
+          envFrom:
+          {{- if $environment }}
+            - configMapRef:
+                name: {{ $configMap }}
+                optional: true
+          {{- end }}
+          {{- if $environmentSecrets }}
+            - secretRef:
+                name: {{ $secret }}
+                optional: true
+          {{- end }}
+          {{- end }}
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+          {{- if $tls }}
+            - name: vault-tls
+              mountPath: /vault/tls
+          {{- end}}
+
+        {{- end }}
+        {{- end }}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -62,15 +159,16 @@ spec:
               containerPort: 8081
               protocol: TCP
           volumeMounts:
-          {{- if .Values.storage.nfs.enabled }}
+          {{- if .Values.vault.agents }}
             - name: vault-token
-              mountPath: {{ .Values.storage.nfs.mountPath }}
-          {{- end }}
-          {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
-          {{- range .Values.vault.agents }}
-            - name: agent-secret-{{ .name }}
-              mountPath: {{ .mountPath }}
-          {{- end }}
+              mountPath: /vault/token
+            - name: vault-config
+              mountPath: /vault/config
+          {{- end}}
+          
+          {{- if .Values.vault.tls.enabled }}
+            - name: vault-tls
+              mountPath: /vault/tls
           {{- end }}     
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
@@ -114,18 +212,27 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      {{- if .Values.storage.nfs.enabled }}
         - name: vault-token
+      {{- if or .Values.storage.existingPvc .Values.storage.nfs.enabled }}
           persistentVolumeClaim:
+        {{ if .Values.storage.nfs.enabled  }}
             claimName: {{ include "quorumkeymanager.fullname" . }}-nfs-claim
+        {{ else }}
+            claimName: {{ .Values.storage.existingPvc }}
+        {{- end }}  
+      {{ else }}
+          emptyDir: {}
       {{- end }}
-      {{- if and (gt (len .Values.vault.agents) 0 ) .Values.vault.tls.enabled }}
-      {{- range .Values.vault.agents }}
-        - name: agent-secret-{{ .name }}
-          secret:
-            secretName: qkm-agent-secret-{{ .name }}
-      {{- end }}
+      {{- if .Values.vault.agents }}
+        - name: vault-config
+          configMap:
+            name: qkm-vault-agent-cm
       {{- end }} 
+      {{- if .Values.vault.tls.enabled }}
+        - name: vault-tls
+          secret:
+            secretName: qkm-vault-agent-secret
+      {{- end }}
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
           secret:

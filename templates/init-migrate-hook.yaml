@@ -1,0 +1,93 @@
+{{- if .Values.postgresql.tls.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "quorumkeymanager.fullname" . }}-migration-certs
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  ca.crt: {{ .Values.postgresql.certs.ca }}
+  client.crt: {{ .Values.postgresql.certs.client.crt }}
+  client.key: {{ .Values.postgresql.certs.client.key }}
+{{- end }}
+{{- if .Values.migrate.environmentSecrets }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "quorumkeymanager.fullname" . }}-hook-secretmap
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+type: Opaque
+data:
+{{- range $key,$value := .Values.migrate.environmentSecrets }}
+  {{ $key }}: {{ $value | b64enc | quote }}
+{{- end }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "quorumkeymanager.fullname" . }}-migrate-init-job
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  backoffLimit: {{ .Values.migrate.backoffLimit }}
+  template:
+    metadata:
+      name: migrate-init
+      labels:
+        {{- include "quorumkeymanager.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- if .Values.imageCredentials }}
+      imagePullSecrets:
+        - name: {{ include "quorumkeymanager.imagePullSecretName" . }}
+      {{- end }}
+      containers:
+        - name: {{ template "quorumkeymanager.fullname" . }}-initdb
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          securityContext:
+            runAsUser: 65532
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /main
+          args:
+            - migrate
+            - up
+          envFrom:
+            - configMapRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-hook-envmap
+            {{- if .Values.migrate.environmentSecrets }}
+            - secretRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-hook-secretmap
+                optional: true
+            {{- end }}
+          volumeMounts:
+          {{- if .Values.postgresql.tls.enabled }}
+            - name: postgres-certs
+              mountPath: /postgres/certs
+              readOnly: true
+          {{- end }}
+      volumes:
+      {{- if .Values.postgresql.tls.enabled }}
+        - name: postgres-certs
+          secret:
+            defaultMode: 0600
+            secretName: {{ include "quorumkeymanager.fullname" . }}-migration-certs
+      {{- end }}
+            
