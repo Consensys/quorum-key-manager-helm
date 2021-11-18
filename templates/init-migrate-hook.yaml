@@ -1,4 +1,20 @@
 {{- if .Values.migrate.enabled }}
+{{- if .Values.postgresql.tls.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "quorumkeymanager.fullname" . }}-migration-certs
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+type: Opaque
+data:
+  ca.crt: {{ .Values.postgresql.certs.ca }}
+  client.crt: {{ .Values.postgresql.certs.client.crt }}
+  client.key: {{ .Values.postgresql.certs.client.key }}
+{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -23,7 +39,7 @@ metadata:
   name: {{ template "quorumkeymanager.fullname" . }}-hook-secretmap
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": hook-succeeded
   labels:
@@ -43,7 +59,7 @@ metadata:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": post-install
     "helm.sh/hook-weight": "10"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
@@ -88,7 +104,7 @@ spec:
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
           secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-postgres-certs
+            secretName: {{ include "quorumkeymanager.fullname" . }}-migration-certs
       {{- end }}
             
 {{- end }}
