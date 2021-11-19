@@ -91,3 +91,5 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `storage.nfs.mountPath`                                          | mount path of the shared storage common to qkm and agents                                                              | `/vault/token`|
 | `storage.nfs.driver`                                          | Your nfs filesystem driver                                                              | `efs.csi.aws.com`|
 | `storage.nfs.provisioner`                                          | Your nfs file system provisioner                                                              | `efs.csi.aws.com`|
+| `migrate.environment`                                        | Environment variables passed to the DB migration Job                                                          | `{}`                                          |
+| `migrate.environmentSecrets`                                 | Environment variables (as Kubernetes secrets) passed to the DB migration Job                                  | `{}`                                          |
