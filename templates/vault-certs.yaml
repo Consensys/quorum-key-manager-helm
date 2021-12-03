@@ -1,4 +1,4 @@
-{{- if .Values.vault.tls.enabled }}
+{{- if and .Values.vault.tls.enabled .Values.vault.agents }}
 ---
 apiVersion: v1
 kind: Secret
