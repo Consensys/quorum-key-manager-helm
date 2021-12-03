@@ -37,16 +37,46 @@ spec:
       labels:
         {{- include "quorumkeymanager.labels" . | nindent 8 }}
     spec:
+      securityContext:
+        fsGroup: 1001
       restartPolicy: Never
       {{- if .Values.imageCredentials }}
       imagePullSecrets:
         - name: {{ include "quorumkeymanager.imagePullSecretName" . }}
       {{- end }}
+      {{- if .Values.postgresql.tls.enabled }}
+      initContainers:
+        - name: init-chmod-data
+          image: docker.io/bitnami/bitnami-shell:10-debian-10-r185
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          command:
+            - /bin/sh
+            - -cx
+            - |
+              cp /postgres/certs/tmp.key /postgres/key/client.key
+              chown -R 1001:1001 /postgres/key/
+              chmod 600 /postgres/key/client.key
+              ls -l /postgres/key/client.key
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+          {{- if .Values.postgresql.tls.enabled }}
+            - name: postgres-certs
+              mountPath: /postgres/certs
+            - name: postgres-key
+              mountPath: /postgres/key
+          {{- end }}
+      {{- end }}
       containers:
         - name: {{ template "quorumkeymanager.fullname" . }}-initdb
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           securityContext:
-            runAsUser: 65532
+            runAsNonRoot: true
+            runAsUser: 1001
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /main
@@ -66,12 +96,22 @@ spec:
             - name: postgres-certs
               mountPath: /postgres/certs
               readOnly: true
+            - name: postgres-key
+              mountPath: /postgres/key
           {{- end }}
       volumes:
       {{- if .Values.postgresql.tls.enabled }}
         - name: postgres-certs
           secret:
-            defaultMode: 0600
             secretName: {{ include "quorumkeymanager.fullname" . }}-migration-certs
+            items:
+              - key: client.crt
+                path: client.crt
+              - key: client.key
+                path: tmp.key
+              - key: ca.crt
+                path: ca.crt
+        - name: postgres-key
+          emptyDir: {}
       {{- end }}
             

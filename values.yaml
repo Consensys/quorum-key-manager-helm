@@ -12,6 +12,8 @@ image:
 
 environment: {}
 environmentSecrets: {}
+# 'existingSecret' specifies name of externally created secret
+# existingSecret:
 
 nameOverride: ""
 fullnameOverride: ""

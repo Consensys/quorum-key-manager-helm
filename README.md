@@ -69,6 +69,7 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `affinity`                                           | Affinity for pod assignment                                                                                            | `{}`                                          |
 | `environment`                                        | Environment variables passed to Quorum Key Manager containers                                                          | `{}`                                          |
 | `environmentSecrets`                                 | Environment variables (as Kubernetes secrets) passed to Quorum Key Manager containers                                  | `{}`                                          |
+| `existingSecret`                                     | Already existing Secret name used to inject Environment variables                                 | nil |
 | `manifests`                                          | List of manifests to be loaded by the Quorumm Key Manager                                                              | ``                                            |
 | `auth.apikey.enabled`                                          | Is authentication based on passing an API-KEY enabled                                                              | `true`|
 | `auth.apikey.file`                                          | file path to the api keys file                                                             | `/apikey/api-keys.csv`|
