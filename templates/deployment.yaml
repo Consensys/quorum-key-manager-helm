@@ -39,8 +39,6 @@ spec:
         {{- range .Values.vault.agents }}
         {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
         - name: init-token-{{ .name }}
-          securityContext:
-            runAsUser: 1001
           image: {{ $agentImage }}
           args:
             - "agent"
