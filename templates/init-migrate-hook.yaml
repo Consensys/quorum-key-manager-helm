@@ -48,7 +48,7 @@ spec:
       initContainers:
         - name: init-chmod-data
           image: docker.io/bitnami/bitnami-shell:10-debian-10-r185
-          imagePullPolicy: "Always"
+          imagePullPolicy: "IfNotPresent"
           resources:
             requests:
               cpu: 250m
