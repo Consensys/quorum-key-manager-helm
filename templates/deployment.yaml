@@ -40,15 +40,15 @@ spec:
         {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
         - name: init-token-{{ .name }}
           securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
+            runAsUser: 1001
           image: {{ $agentImage }}
           args:
             - "agent"
             - "-config"
             - "/vault/config/init-agent-config-{{ .name }}.hcl"
-          env:
+          env: 
+            - name: "SKIP_SETCAP"
+              value: "true"
             - name: VAULT_ADDR
               value: "{{ .vaultAddress }}"
           {{- if $tls }}
@@ -60,6 +60,8 @@ spec:
               value: /vault/tls/{{ .name }}-client.crt
           {{- end }}
             - name: SKIP_CHOWN
+              value: "true"
+            - name: "SKIP_SETCAP"
               value: "true"
           volumeMounts:
             - name: vault-token
@@ -79,13 +81,10 @@ spec:
         {{- $environment := .Values.environment -}}
         {{- $tls := .Values.vault.tls.enabled -}}
         {{- $environmentSecrets := .Values.environmentSecrets -}}
+        {{- $existingSecret := .Values.existingSecret -}}
         {{- range .Values.vault.agents }}
         {{- $agentImage := printf "%s:%s" .image.repository .image.tag }}
         - name: vault-agent-{{ .name }}
-          securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
           image: {{ $agentImage }}
           args:
             - "agent"
@@ -104,6 +103,8 @@ spec:
           {{- end }}
             - name: SKIP_CHOWN
               value: "true"
+            - name: "SKIP_SETCAP"
+              value: "true"
           {{- if or $environment $environmentSecrets }}
           envFrom:
           {{- if $environment }}
@@ -116,6 +117,11 @@ spec:
                 name: {{ $secret }}
                 optional: true
           {{- end }}
+          {{- if $existingSecret }}
+            - secretRef:
+                name: {{ $existingSecret }}
+                optional: true
+            {{- end }}
           {{- end }}
           volumeMounts:
             - name: vault-token
