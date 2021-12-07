@@ -103,7 +103,7 @@ spec:
               value: "true"
             - name: "SKIP_SETCAP"
               value: "true"
-          {{- if or $environment $environmentSecrets }}
+          {{- if or $environment $environmentSecrets $existingSecret }}
           envFrom:
           {{- if $environment }}
             - configMapRef:
