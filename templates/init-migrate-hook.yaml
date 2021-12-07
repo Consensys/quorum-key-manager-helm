@@ -91,6 +91,11 @@ spec:
                 name: {{ include "quorumkeymanager.fullname" . }}-hook-secretmap
                 optional: true
             {{- end }}
+            {{- if .Values.migrate.existingSecret }}
+            - secretRef:
+                name: {{ .Values.migrate.existingSecret }}
+                optional: true
+            {{- end }}
           volumeMounts:
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs

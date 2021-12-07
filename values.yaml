@@ -156,3 +156,5 @@ migrate:
   backoffLimit: 6
   environment: {}
   environmentSecrets: {}
+  # 'existingSecret' specifies name of externally created secret
+  # existingSecret:
