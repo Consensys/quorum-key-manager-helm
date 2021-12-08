@@ -103,7 +103,7 @@ spec:
               value: "true"
             - name: "SKIP_SETCAP"
               value: "true"
-          {{- if or $environment $environmentSecrets $existingSecret }}
+          {{- if or $environment $environmentSecrets }}
           envFrom:
           {{- if $environment }}
             - configMapRef:
@@ -115,11 +115,11 @@ spec:
                 name: {{ $secret }}
                 optional: true
           {{- end }}
+          {{- end }}
           {{- if $existingSecret }}
             - secretRef:
                 name: {{ $existingSecret }}
                 optional: true
-            {{- end }}
           {{- end }}
           volumeMounts:
             - name: vault-token
@@ -154,6 +154,11 @@ spec:
                 name: {{ include "quorumkeymanager.fullname" . }}-secretmap
                 optional: true
             {{- end }}
+          {{- end }}
+          {{- if .Values.existingSecret }}
+            - secretRef:
+                name: {{ .Values.existingSecret }}
+                optional: true
           {{- end }}
           ports:
             - name: http-svc
