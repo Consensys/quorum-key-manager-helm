@@ -94,3 +94,4 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `storage.nfs.provisioner`                                          | Your nfs file system provisioner                                                              | `efs.csi.aws.com`|
 | `migrate.environment`                                        | Environment variables passed to the DB migration Job                                                          | `{}`                                          |
 | `migrate.environmentSecrets`                                 | Environment variables (as Kubernetes secrets) passed to the DB migration Job                                  | `{}`                                          |
+| `migrate.existingSecret`                                 | Already existing Secret name used to inject Environment variables passed to the DB migration Job                                  | nil                                          |
