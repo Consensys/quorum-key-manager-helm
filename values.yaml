@@ -161,3 +161,5 @@ migrate:
 
 sync:
   enabled: true
+  storeName: ""
+  environment: {}

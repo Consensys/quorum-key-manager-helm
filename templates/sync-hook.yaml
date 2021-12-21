@@ -27,12 +27,17 @@ spec:
       containers:
         - name: {{ template "quorumkeymanager.fullname" . }}-sync
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1001
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /main
           args:
             - sync
+          env:
+            - name: SYNC_STORE_NAME
+              value: {{ .Values.sync.storeName }}
+          {{- if .Values.sync.environment }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-sync-hook-envmap
+          {{- end }}
 {{- end }}

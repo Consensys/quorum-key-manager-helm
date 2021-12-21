@@ -96,3 +96,5 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `migrate.environmentSecrets`                                 | Environment variables (as Kubernetes secrets) passed to the DB migration Job                                  | `{}`                                          |
 | `migrate.existingSecret`                                 | Already existing Secret name used to inject Environment variables passed to the DB migration Job                                  | nil                                          |
 | `sync.enabled`                                 | Accounts synchronisation is enabled and will run the appropriate `sync` Job fo you                                  | true                                          |
+| `sync.storeName`                                  | Name of the store you want to `sync` with                                  | `""`                                          |
+| `sync.environment`                                 | Environment variables passed to the `sync` Job                                  | `{}`                                          |
