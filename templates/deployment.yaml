@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "quorumkeymanager.labels" . | nindent 4 }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "quorumkeymanager.selectorLabels" . | nindent 6 }}

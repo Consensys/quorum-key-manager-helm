@@ -1,0 +1,43 @@
+{{- if .Values.sync.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "quorumkeymanager.fullname" . }}-sync-job
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  backoffLimit: {{ .Values.migrate.backoffLimit }}
+  template:
+    metadata:
+      name: sync
+      labels:
+        {{- include "quorumkeymanager.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- if .Values.imageCredentials }}
+      imagePullSecrets:
+        - name: {{ include "quorumkeymanager.imagePullSecretName" . }}
+      {{- end }}
+      containers:
+        - name: {{ template "quorumkeymanager.fullname" . }}-sync
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /main
+          args:
+            - sync
+          env:
+            - name: SYNC_STORE_NAME
+              value: {{ .Values.sync.storeName }}
+          {{- if .Values.sync.environment }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "quorumkeymanager.fullname" . }}-sync-hook-envmap
+          {{- end }}
+{{- end }}

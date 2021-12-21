@@ -1,0 +1,15 @@
+{{- if .Values.sync.environment }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "quorumkeymanager.fullname" . }}-sync-hook-envmap
+  labels:
+    {{- include "quorumkeymanager.labels" . | nindent 4 }}
+  annotations:
+    {{- include "quorumkeymanager.annotations" . | nindent 4 }}
+data:
+{{- range $key,$value := .Values.sync.environment }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
