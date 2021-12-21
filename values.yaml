@@ -8,7 +8,7 @@ image:
   repository: docker.io/consensys/quorum-key-manager
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v21.12.0"
+  tag: "v21.12.1"
 
 environment: {}
 environmentSecrets: {}
@@ -158,3 +158,6 @@ migrate:
   environmentSecrets: {}
   # 'existingSecret' specifies name of externally created secret
   # existingSecret:
+
+sync:
+  enabled: true

@@ -27,3 +27,4 @@ All notable changes to this project will be documented in this file.
 ### 🛠 Features
  * Chart compatible with v21.12.X of Quorum Key Manager
  * Added replicaCount value missing in deployment
+ * Added `sync` Job
