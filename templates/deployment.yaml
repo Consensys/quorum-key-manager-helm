@@ -45,7 +45,7 @@ spec:
             - "agent"
             - "-config"
             - "/vault/config/init-agent-config-{{ .name }}.hcl"
-          env: 
+          env:
             - name: "SKIP_SETCAP"
               value: "true"
             - name: VAULT_ADDR
@@ -175,11 +175,11 @@ spec:
             - name: vault-config
               mountPath: /vault/config
           {{- end}}
-          
+
           {{- if .Values.vault.tls.enabled }}
             - name: vault-tls
               mountPath: /vault/tls
-          {{- end }}     
+          {{- end }}
           {{- if .Values.postgresql.tls.enabled }}
             - name: postgres-certs
               mountPath: /postgres/certs
@@ -229,7 +229,7 @@ spec:
             claimName: {{ include "quorumkeymanager.fullname" . }}-nfs-claim
         {{ else }}
             claimName: {{ .Values.storage.existingPvc }}
-        {{- end }}  
+        {{- end }}
       {{ else }}
           emptyDir: {}
       {{- end }}
@@ -237,7 +237,7 @@ spec:
         - name: vault-config
           configMap:
             name: qkm-vault-agent-cm
-      {{- end }} 
+      {{- end }}
       {{- if .Values.vault.tls.enabled }}
         - name: vault-tls
           secret:
@@ -266,9 +266,15 @@ spec:
           secret:
             secretName: {{ include "quorumkeymanager.fullname" . }}-oidc-pubkey
       {{- end }}
+      {{- if or .Values.manifests .Values.manifestsFromSecret }}
         - name: manifests-config
           secret:
-            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests      
+            {{- if .Values.manifestsFromSecret }}
+            secretName: {{ .Values.manifestsFromSecret }}
+            {{- else }}
+            secretName: {{ include "quorumkeymanager.fullname" . }}-manifests
+            {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
