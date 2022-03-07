@@ -14,7 +14,7 @@ To install the chart with the release name `qkm`:
 
 ```console
 $ helm repo add helm-consensys https://artifacts.consensys.net/public/helm/helm/charts/
-$ helm install qkm helm-consensys/qkm
+$ helm install qkm helm-consensys/quorumkeymanager
 ```
 
 These commands deploy Quorum Key Manager on the Kubernetes cluster with the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
