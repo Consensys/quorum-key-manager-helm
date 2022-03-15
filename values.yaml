@@ -66,14 +66,26 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
           servicePort: 8080
-        - path: /isalive
-          pathType: ImplementationSpecific
-          servicePort: 8081
+      
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+health:
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: health-qkm.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            servicePort: 8081
+            
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
