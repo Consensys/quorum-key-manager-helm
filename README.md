@@ -60,8 +60,10 @@ The following tables lists the configurable parameters of the Quoum Key Manager 
 | `ingress.hosts[0].host`                              | Hostname to your Quorum Key Manager                                                                                    | `qkm.local`                                   |
 | `ingress.hosts[0].http.paths[0].path`                | Path within the url structure                                                                                          | `/`                                           |
 | `ingress.hosts[0].http.paths[0].backend.servicePort` | Service port to serve                                                                                                  | `http-svc`                                    |
-| `ingress.tls[0].secretName`                          | TLS Secret Name                                                                                                        | `nil`                                         |
+| `ingress.tls[0].secretName`                          | TLS Secret Name                                                                                                        | 
+`nil`                                         |
 | `ingress.tls[0].hosts`                               | Array of TLS hosts for ingress record                                                                                  | `[]`                                          |
+| `health`                          | Health endpoint definition, similar to ingress above, without TLS support    | `{}` |
 | `resources.limits`                                   | The resources limits for Quorum Key Manager containers                                                                 | `{}`                                          |
 | `resources.requests`                                 | The requested resources for Quorum Key Manager containers                                                              | `{}`                                          |
 | `nodeSelector`                                       | Node labels for pod assignment                                                                                         | `{}`                                          |
