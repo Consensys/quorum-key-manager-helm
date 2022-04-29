@@ -6,7 +6,7 @@ metadata:
   name: {{ template "quorumkeymanager.fullname" . }}-hook-secretmap
   annotations:
     {{- include "quorumkeymanager.annotations" . | nindent 4 }}
-    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook": post-install
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": hook-succeeded
   labels:
