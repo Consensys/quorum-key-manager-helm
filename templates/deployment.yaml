@@ -33,6 +33,12 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
+        - name: {{ include "quorumkeymanager.fullname" . }}-init
+          image: "groundnuty/k8s-wait-for:1.3"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: 
+          - "job"
+          - "{{ template "quorumkeymanager.fullname" . }}-migrate-{{ now | date "20060102150405" }}"
         {{- if .Values.vault.agents }}
         {{- $environment := .Values.environment }}
         {{- $tls := .Values.vault.tls.enabled }}
