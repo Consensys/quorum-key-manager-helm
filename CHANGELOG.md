@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## v1.1.8 (2022-04-29)
+## v1.1.9 (2022-06-02)
 
 ### 🛠 Features
  * Apply new migration strategy to ensure migration Job is running always
