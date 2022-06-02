@@ -157,6 +157,7 @@ storage:
   mountPath: /vault/token
 
 migrate:
+  ttlSecondsAfterFinished: 120
   backoffLimit: 6
   environment: {}
   environmentSecrets: {}
